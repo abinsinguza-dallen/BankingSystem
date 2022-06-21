@@ -21,27 +21,27 @@ class Account:
             return f"hello customer deposit amount must be greater than zero(0)"
         else:
              self.balance+=amount
-             note={"amount":amount,f'on'"date":date.strftime("%d/%m/%Y"),"narration":f'thank you for withdrawing'}
+             note={"amount":amount,f'on'"date":date.strftime("%d/%m/%Y"),"narration":f'thank you for depositing'}
              self.deposits.append(note)
         return f"Hello {self.account_name} You have deposited Ugshs.{amount} and your new balance is {self.balance})"
         
     
     def withdraw (self,amount):
-        self.amount=amount
+        total=amount+self.transaction
         date=datetime.now()
        
-        if amount>self.balance:
-            return f"Hello customer,you have insuffient funds vafor making withdraw"
+        if amount>=self.balance:
+            return f"Hello customer,you have insuffient funds for making a withdraw"
         elif amount<=0:
             return f"Hello customer, you can't withdraw  amount less than zero "            
+        
+        elif amount==self.balance:
+            return f"hello customer you cant withdraw"
         else:
-             self.balance -=amount
+             self.balance -=total
              note={"amount":amount,f'on'"date":date.strftime("%d/%m/%Y"),"narration":f'thank you for withdrawing'}
              self.withdrawals.append(note)
-        withdrawal_amount=self.balance-self.transaction
-        if amount>withdrawal_amount:
-            return "you have insufficient balance"
-        self.balance-=amount+self.transaction
+        self.withdrawals.append(amount)
         return f"Yellow {self.account_name} ,you have withdrawn UGx.{amount} and your new balance is {self.balance} )"
                  
          
@@ -84,12 +84,14 @@ class Account:
          if amount>self.loan_balance:
              self.balance+=amount-self.loan_balance
              self.loan_balance=0
-             return f" Dear customer thank you for paying the loan of {amount-self.loan_balance} your account balance is {self.balance}"      
+             return f" Dear customer thank you for paying the loan of {amount-self.loan_balance} your account balance is {self.loan_balance}"      
+         if amount<self.loan_balance:
+            self.loan_balance=amount-self.loan_balance
+            return f"hello {self.account_name} you have paid {amount} your loan balance is {self.loan_balance}"
+    
          else:
              self.loan_balance-=amount
-             return f"thank you"
-            
-         
+             return f"thank you for repaying"   
      
     def transfer(self,amount,new_account):
         if amount<=0:
