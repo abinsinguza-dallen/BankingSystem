@@ -21,8 +21,9 @@ class Account:
             return f"hello customer deposit amount must be greater than zero(0)"
         else:
              self.balance+=amount
-             note={"amount":amount,f'on'"date":date.strftime("%d/%m/%Y"),"narration":f'thank you for depositing'}
+             note={"date":date,"narration":f'you made a deposit of',"amount":amount,}
              self.deposits.append(note)
+             self.deposits.append(amount)
         return f"Hello {self.account_name} You have deposited Ugshs.{amount} and your new balance is {self.balance})"
         
     
@@ -39,7 +40,7 @@ class Account:
             return f"hello customer you cant withdraw"
         else:
              self.balance -=total
-             note={"amount":amount,f'on'"date":date.strftime("%d/%m/%Y"),"narration":f'thank you for withdrawing'}
+             note={"date":date,"narration":f'you made a withdraw of',"amount":amount}
              self.withdrawals.append(note)
         self.withdrawals.append(amount)
         return f"Yellow {self.account_name} ,you have withdrawn UGx.{amount} and your new balance is {self.balance} )"
@@ -58,18 +59,23 @@ class Account:
     def full_statement(self):
         statement=self.deposits+self.withdrawals
         for a in statement:
-            print(a)    
+            statement.sort(key=lambda a:a['date'],reverse=True)
+            date=a['date']
+            narration=a['narration']
+            amount=a['amount']
+            print(f"{date} '------' {narration}'-----'{amount}")
+
     def borrow(self,amount):
         sum=0
         for y in self.deposits:
-            sum+=y["amount"]
+            sum+=y
             
         if len(self.deposits) <10:
-            return f"Hello customer you are not eligible to borrow.make {10-len(self.deposits)} to borrow "
+            return f"Hello customer you are not eligible to borrow.make more {10-len(self.deposits)} deposits to borrow "
         if amount<100:
-            return f"Hello customer you are eligible to borrow atleast 100"  
-        if amount>sum/3:
-            return f"Hello customer you can only borrow upto {sum/3}" 
+            return f"Hello customer you are eligible to borrow atleast more than 100"  
+        if amount>sum//3:
+            return f"Hello customer you can only borrow up to {sum//3}" 
         if self.balance!=0:
             return f"Hello you have Ugshs.{self.balance} you cant borrow yet you still have balance on your account"
         if self.loan_balance!=0:
@@ -77,30 +83,32 @@ class Account:
         else:
             interest= 3/100*(amount)
             self.loan_balance+=amount+interest
-            return f"Hello customer you have borrowed {amount} your loan is now at {self.loan_balance}"
+            self.balance+=amount
+            return f"Hello {self.account_name} you have borrowed {amount} your loan is now at {self.loan_balance}"
     
     def loan_repayment(self,amount):
         
          if amount>self.loan_balance:
              self.balance+=amount-self.loan_balance
              self.loan_balance=0
-             return f" Dear customer thank you for paying the loan of {amount-self.loan_balance} your account balance is {self.loan_balance}"      
-         if amount<self.loan_balance:
+             return f" Dear customer thank you for paying the loan of {amount-self.loan_balance} your account balance is {self.balance}"      
+         if amount<=self.loan_balance:
             self.loan_balance=amount-self.loan_balance
             return f"hello {self.account_name} you have paid {amount} your loan balance is {self.loan_balance}"
     
          else:
              self.loan_balance-=amount
-             return f"thank you for repaying"   
-     
-    def transfer(self,amount,new_account):
-        if amount<=0:
-            return "invalid amount"
-        if amount>=self.balance:
-            return f"insuficient funds"
-        if isinstance(new_account,Account):
+             return f"Thank you for repaying"   
+
+    def transfer (self,amount,account):
+        if amount<self.balance:
             self.balance-=amount
-            new_account.balance+=amount
-            return f"you have sent {amount} to  the new account with the name {new_account.account_name}.your new balance is {self.balance}"
+            account.deposit(amount)
+            return f"succesefully sent money" 
+
+        else:
+             amount >self.balance
+             return f"insufficient balace"
+
                 
     
